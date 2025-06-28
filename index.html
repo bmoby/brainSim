@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <title>Think - Neural Connections</title>
+    <meta
+      name="description"
+      content="Interactive neural network visualization"
+    />
+    <meta name="author" content="AI Assistant" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no"
+    />
+    <link rel="stylesheet" media="screen" href="css/style.css" />
+  </head>
+  <body>
+    <main class="app">
+      <section class="hero">
+        <div class="hero__content">
+          <img src="img/maga.webp" alt="Maga" class="hero__image" />
+          <h1 class="hero__title">Thinking</h1>
+          <p class="hero__subtitle">Neural connections in motion</p>
+          <div class="hero__stats" id="dynamic-stats"></div>
+        </div>
+        <div class="hero__visual">
+          <div id="canvas-container"></div>
+        </div>
+      </section>
+    </main>
+
+    <!-- scripts -->
+    <script src="js/lib/p5.min.js"></script>
+    <script>
+      // 📱 DÉTECTION AUTOMATIQUE MOBILE
+      function isMobileDevice() {
+        return (
+          /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+            navigator.userAgent
+          ) ||
+          "ontouchstart" in window ||
+          navigator.maxTouchPoints > 0
+        );
+      }
+
+      // Charger le script approprié
+      if (isMobileDevice()) {
+        console.log(
+          "📱 Appareil mobile détecté - Chargement version mobile optimisée"
+        );
+        document.write('<script src="js/brain-sketch-v2-mobile.js"><\/script>');
+      } else {
+        console.log(
+          "🖥️ Appareil desktop détecté - Chargement version standard"
+        );
+        document.write('<script src="js/brain-sketch-v2.js"><\/script>');
+      }
+    </script>
+  </body>
+</html>

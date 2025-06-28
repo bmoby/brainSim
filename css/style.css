@@ -1,0 +1,330 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap");
+
+/* =============================================================================
+   CSS Reset & Base Styles
+   ========================================================================== */
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+body {
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    sans-serif;
+  line-height: 1.6;
+  color: #666666;
+  background: #0a0a0a;
+  overflow-x: hidden; /* Éviter le scroll horizontal */
+}
+
+/* =============================================================================
+   App Layout
+   ========================================================================== */
+
+.app {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* =============================================================================
+   Hero Section
+   ========================================================================== */
+
+.hero {
+  display: grid;
+  grid-template-columns: 1fr 2fr; /* Texte prend 1/3, canvas prend 2/3 */
+  gap: 3rem;
+  width: 100%;
+  max-width: 1400px; /* Largeur maximale pour éviter les débordements */
+  height: 100vh;
+  padding: 0 2rem; /* Padding responsive */
+  align-items: center;
+}
+
+.hero__content {
+  justify-self: end; /* Aligner le contenu vers la droite de sa colonne */
+  text-align: right;
+  max-width: 400px; /* Largeur maximale pour le texte */
+}
+
+.hero__image {
+  width: 120px;
+  height: auto;
+  margin-bottom: 2.5rem;
+  opacity: 0.7;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  filter: grayscale(100%) brightness(0.8) contrast(1.2);
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.hero__image:hover {
+  opacity: 0.9;
+  filter: grayscale(80%) brightness(0.9) contrast(1.1);
+  transform: scale(1.02);
+}
+
+.hero__title {
+  font-size: clamp(2.5rem, 5vw, 4rem); /* Taille responsive */
+  font-weight: 300;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+  opacity: 0.8;
+  line-height: 0.9;
+}
+
+.hero__subtitle {
+  font-size: clamp(0.8rem, 1.2vw, 1rem);
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0.5;
+  font-style: italic;
+}
+
+.hero__stats {
+  margin-top: 1.5rem;
+  font-size: clamp(0.7rem, 1vw, 0.85rem);
+  font-weight: 300;
+  letter-spacing: 0.05em;
+  opacity: 0.6;
+  line-height: 1.4;
+  font-family: "Inter", monospace;
+}
+
+.hero__visual {
+  position: relative;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#canvas-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* =============================================================================
+   Canvas Styles
+   ========================================================================== */
+
+canvas {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+/* =============================================================================
+   Responsive Design
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  .hero {
+    grid-template-columns: 1fr; /* Une seule colonne sur mobile */
+    grid-template-rows: auto 1fr;
+    gap: 0; /* Pas de gap */
+    padding: 0; /* Pas de padding */
+    text-align: center;
+    height: 100vh; /* Pleine hauteur */
+    position: relative;
+  }
+
+  /* 📱 HEADER MOBILE ÉLÉGANT - Position absolue par-dessus le canvas */
+  .hero__content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    padding: 1rem;
+    background: linear-gradient(
+      180deg,
+      rgba(10, 10, 10, 0.85) 0%,
+      rgba(10, 10, 10, 0.7) 40%,
+      rgba(10, 10, 10, 0.3) 70%,
+      transparent 100%
+    );
+    -webkit-backdrop-filter: blur(3px);
+    backdrop-filter: blur(3px);
+  }
+
+  .hero__title {
+    font-size: clamp(1.2rem, 5vw, 1.8rem); /* 📱 Titre visible mais compact */
+    font-weight: 300;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin: 0.5rem 0 0.2rem 0;
+    opacity: 0.9;
+    line-height: 1;
+  }
+
+  .hero__subtitle {
+    font-size: clamp(
+      0.6rem,
+      2.5vw,
+      0.8rem
+    ); /* 📱 Sous-titre visible mais discret */
+    font-weight: 400;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    opacity: 0.6;
+    font-style: italic;
+    margin: 0;
+  }
+
+  .hero__image {
+    width: 50px; /* Logo compact */
+    height: auto;
+    margin: 0 auto 0.5rem auto;
+    filter: grayscale(100%) brightness(0.7) contrast(1.3);
+    opacity: 0.9;
+    display: block;
+  }
+
+  .hero__image:hover {
+    filter: grayscale(90%) brightness(0.8) contrast(1.2);
+  }
+
+  /* 📱 CANVAS PLEIN ÉCRAN AVEC OVERLAY */
+  .hero__visual {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1;
+  }
+
+  #canvas-container {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero {
+    padding: 1rem;
+    gap: 1rem;
+  }
+
+  .hero__title {
+    letter-spacing: 0.1em;
+  }
+}
+
+/* =============================================================================
+   Performance & Accessibility
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* =============================================================================
+   📱 OPTIMISATIONS MOBILE TACTILES
+   ========================================================================== */
+
+/* Désactiver la sélection de texte sur mobile */
+@media (max-width: 768px) {
+  body {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Accélération matérielle pour les performances */
+  .hero__visual,
+  #canvas-container,
+  canvas {
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+  }
+
+  /* Optimisations tactiles */
+  * {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Canvas mobile optimisé */
+  canvas {
+    touch-action: none; /* Empêcher scroll/zoom accidentels */
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+  }
+
+  /* 📱 MASQUER LES STATS SUR MOBILE pour une expérience pure */
+  .hero__stats {
+    display: none;
+  }
+}
+
+/* Optimisations pour très petits écrans */
+@media (max-width: 320px) {
+  .hero {
+    min-height: 100vh;
+    padding: 0.5rem;
+  }
+
+  .hero__content {
+    margin-bottom: 1rem;
+  }
+
+  .hero__image {
+    width: 80px;
+    margin-bottom: 1rem;
+  }
+}
+
+/* =============================================================================
+   Legacy Stats (keep if needed)
+   ========================================================================== */
+
+.count-particles {
+  background: rgba(0, 0, 34, 0.8);
+  position: absolute;
+  top: 2rem;
+  left: 2rem;
+  padding: 0.5rem;
+  color: #13e8e9;
+  font-size: 0.8rem;
+  font-family: monospace;
+  border-radius: 4px;
+  backdrop-filter: blur(10px);
+}
+
+#stats {
+  position: absolute;
+  top: 2rem;
+  left: 2rem;
+}
