@@ -41,7 +41,7 @@ let depthSortNeeded = false; // Flag tri conditionnel
 let randomPixelPool = [];
 let randomParticlePool = [];
 let poolIndex = 0;
-const POOL_SIZE = 20;
+const POOL_SIZE = 10;
 
 const colorPalette = [
   [255, 255, 255], // White
@@ -192,8 +192,8 @@ function draw() {
   background("#0a0a0a");
   translate(imgOffsetX, imgOffsetY); // Utilise le cache au lieu de recalculer
 
-  // 📱 MOBILE : Création automatique IDENTIQUE AU DESKTOP
-  if (frameCount % 45 === 0 && validPixelsCount > 0 && hotZonesCount < 8) {
+  // 📱 MOBILE : Création automatique RÉDUITE - Plus espacée dans le temps
+  if (frameCount % 90 === 0 && validPixelsCount > 0 && hotZonesCount < 6) {
     const randomPixel = getRandomPixel(); // Utilise pool optimisé
     if (randomPixel) {
       hotZones.push(new SimpleHotZone(randomPixel.x, randomPixel.y));
@@ -201,8 +201,8 @@ function draw() {
     }
   }
 
-  // 📱 MOBILE : Zones aléatoires IDENTIQUES AU DESKTOP
-  if (random() < 0.008 && validPixelsCount > 0 && hotZonesCount < 8) {
+  // 📱 MOBILE : Zones aléatoires TRÈS RÉDUITES - Moins fréquentes
+  if (random() < 0.004 && validPixelsCount > 0 && hotZonesCount < 6) {
     const randomPixel = getRandomPixel(); // Utilise pool optimisé
     if (randomPixel) {
       hotZones.push(new SimpleHotZone(randomPixel.x, randomPixel.y));
@@ -210,12 +210,13 @@ function draw() {
     }
   }
 
-  // 📱 ZONES TACTILES : Équivalent au mouseIsPressed desktop
+  // 📱 ZONES TACTILES : Contrôlées et limitées
   if (
     currentTouch.active &&
     currentTouch.y > 120 &&
     validPixelsCount > 0 &&
-    hotZonesCount < 8
+    hotZonesCount < 6 &&
+    frameCount % 20 === 0 // Seulement toutes les 20 frames pour éviter spam
   ) {
     if (
       reusableMousePixel.x >= 0 &&
@@ -239,34 +240,31 @@ function draw() {
     }
   }
 
-  // 📱 MOBILE : Limite des zones IDENTIQUE AU DESKTOP (avec cache)
-  if (hotZonesCount > 8) {
-    const toRemove = hotZonesCount - 8;
+  // 📱 MOBILE : Limite des zones RÉDUITE (avec cache)
+  if (hotZonesCount > 6) {
+    const toRemove = hotZonesCount - 6;
     hotZones.splice(0, toRemove);
-    hotZonesCount = 8; // Mise à jour cache
+    hotZonesCount = 6; // Mise à jour cache
   }
 
-  // 📱 MOBILE : Vagues de flou IDENTIQUES AU DESKTOP
-  if (frameCount > nextBlurWave) {
-    nextBlurWave = frameCount + random(180, 360); // Identique au desktop
-    triggerBlurWave();
-  }
+  // 📱 MOBILE : PAS DE VAGUES DE FLOU - Expérience nette et claire
+  // Flou désactivé sur mobile pour une meilleure lisibilité
 
-  // 📱 MOBILE : Effets shimmer IDENTIQUES AU DESKTOP (utilise pool optimisé)
-  if (random(1) < 0.083) {
-    // Identique au desktop : ÷3
+  // 📱 MOBILE : Effets shimmer RÉDUITS pour expérience calme (utilise pool optimisé)
+  if (random(1) < 0.05) {
+    // Réduit pour mobile : moins fréquent
     let p = getRandomParticle(); // Pool optimisé
     if (p) p.shine();
   }
 
-  // 📱 MOBILE : Shimmer en cascade IDENTIQUE AU DESKTOP (utilise pool optimisé)
-  if (random(1) < 0.017) {
-    // Identique au desktop : ÷3
-    for (let i = 0; i < 3; i++) {
-      // 3 particules comme desktop
+  // 📱 MOBILE : Shimmer en cascade TRÈS RARE (utilise pool optimisé)
+  if (random(1) < 0.01) {
+    // Encore plus rare pour mobile
+    for (let i = 0; i < 2; i++) {
+      // Seulement 2 particules pour être plus discret
       let p = getRandomParticle(); // Pool optimisé
       if (p) {
-        setTimeout(() => p.shine(), i * 50); // Timing identique au desktop
+        setTimeout(() => p.shine(), i * 80); // Plus espacé dans le temps
       }
     }
   }
@@ -294,10 +292,10 @@ function draw() {
 
 // === SYSTÈME DE CONNEXIONS ULTRA-OPTIMISÉ ===
 function connectParticles() {
-  const threshold = 50; // 📱 MOBILE : Distance IDENTIQUE AU DESKTOP
+  const threshold = 40; // 📱 MOBILE : Distance réduite pour plus de connexions
   const thresholdSquared = threshold * threshold; // 🚀 Éviter sqrt dans la boucle
   let activityLevel = 0;
-  const maxConnections = min(particlesCount * 6, 1500); // 📱 MOBILE : IDENTIQUE AU DESKTOP
+  const maxConnections = min(particlesCount * 7, 1800); // 📱 MOBILE : Plus de connexions pour réseau dense
   let connectionCount = 0;
 
   // 🚀 OPTIMISATION MAJEURE : Regrouper les lignes par style pour éviter stroke() répétés
@@ -307,7 +305,7 @@ function connectParticles() {
 
   for (let i = 0; i < particlesCount && connectionCount < maxConnections; i++) {
     let particleConnections = 0;
-    const maxPerParticle = 5; // 📱 MOBILE : IDENTIQUE AU DESKTOP - 6 connexions max par particule
+    const maxPerParticle = 7; // 📱 MOBILE : Plus de connexions par particule pour réseau dense
 
     for (
       let j = i + 1;
@@ -341,7 +339,7 @@ function connectParticles() {
         const connectionData = { p1, p2, alpha, strokeWidth };
 
         if (inZone && random(1) < 0.4) {
-          // 📱 MOBILE : Connexions électriques IDENTIQUES AU DESKTOP
+          // Connexions électriques actives
           electricConnections.push(connectionData);
         } else if (inZone) {
           // Connexions actives normales
@@ -357,15 +355,15 @@ function connectParticles() {
     }
   }
 
-  // 🚀 OPTIMISATION MAJEURE : Dessiner par groupes avec un seul style par groupe
-  drawConnectionGroup(normalConnections, [100, 150, 200], 1.0);
-  drawConnectionGroup(activeConnections, [200, 220, 255], 1.2);
-  drawConnectionGroup(electricConnections, [255, 255, 255], 1.5);
+  // 📱 MOBILE : Toutes les connexions en bleu électrique
+  drawConnectionGroup(normalConnections, [0, 150, 255], 1.0); // Bleu électrique
+  drawConnectionGroup(activeConnections, [0, 150, 255], 1.2); // Bleu électrique plus intense
+  drawConnectionGroup(electricConnections, [0, 150, 255], 1.5); // Bleu électrique très intense
 
   return activityLevel;
 }
 
-// 🚀 FONCTION OPTIMISÉE : Dessiner un groupe de connexions avec le même style
+// 📱 MOBILE : Fonction optimisée avec bleu électrique simple
 function drawConnectionGroup(connections, baseColor, intensityMultiplier) {
   if (connections.length === 0) return;
 
@@ -387,7 +385,7 @@ function isParticleActive(particle) {
       mouseWorldX,
       mouseWorldY
     );
-    if (touchDistance < 55) return true; // 📱 Zone tactile réduite pour mobile
+    if (touchDistance < 35) return true; // 📱 Zone tactile ultra-réduite
   }
 
   // 📱 Vérifier le trail tactile SEULEMENT s'il y a des positions valides
@@ -400,7 +398,7 @@ function isParticleActive(particle) {
         touchPos.x - imgOffsetX,
         touchPos.y - imgOffsetY
       );
-      if (trailDistance < 40) return true; // 📱 Trail tactile réduit pour mobile
+      if (trailDistance < 25) return true; // 📱 Trail tactile ultra-réduit
     }
   }
 
@@ -425,43 +423,44 @@ function displayMobileInfo() {
       const zones = hotZones.length;
 
       let statsHTML = `${NUM_PARTICLES} neurons (fixed)`;
-      statsHTML += `<br>Touch to activate`;
-      statsHTML += `<br>🎯 ${zones}/8 zones`;
-      statsHTML += `<br><span style="color: #00ff88; font-size: 0.8em;">📱 Mobile v2 - Precise</span>`;
+      statsHTML += `<br>Touch precisely to activate`;
+      statsHTML += `<br>🔵 ${zones}/6 zones (blue)`;
+      statsHTML += `<br><span style="color: #0096ff; font-size: 0.8em;">📱 Mobile v2 - Blue Electric</span>`;
 
       statsElement.innerHTML = statsHTML;
     }
     lastStatsUpdate = frameCount;
   }
 
-  // 📱 BOUTON AUDIO MOBILE DISCRET (évite l'overlay du header)
+  // 📱 BOUTON AUDIO MOBILE EN HAUT À GAUCHE
   resetMatrix();
-  const buttonX = width - 35; // Coin droit
-  const buttonY = height - 45; // Coin bas pour éviter le header
-  const buttonSize = 30; // Taille plus discrète
+  const buttonX = 35; // Coin gauche
+  const buttonY = 35; // Coin haut
+  const buttonSize = 32; // Taille légèrement plus visible
 
+  // 📱 Style bouton audio élégant en haut à gauche
   noStroke();
-  fill(0, 0, 0, 120);
+  fill(0, 0, 0, 140);
   ellipse(buttonX, buttonY, buttonSize, buttonSize);
 
-  stroke(100, 100, 100, 180);
+  stroke(150, 150, 150, 200);
   strokeWeight(2);
   noFill();
   ellipse(buttonX, buttonY, buttonSize, buttonSize);
 
   noStroke();
   textAlign(CENTER, CENTER);
-  textSize(14); // Taille plus discrète
+  textSize(16); // Taille légèrement plus visible
 
   if (audioEnabled) {
-    fill(200, 200, 200, 255);
+    fill(255, 255, 255, 255);
     text("♪", buttonX, buttonY - 2);
   } else {
-    fill(120, 120, 120, 200);
+    fill(150, 150, 150, 220);
     text("♪", buttonX, buttonY - 2);
-    stroke(120, 120, 120, 200);
-    strokeWeight(3);
-    line(buttonX - 8, buttonY - 8, buttonX + 8, buttonY + 8);
+    stroke(150, 150, 150, 200);
+    strokeWeight(2);
+    line(buttonX - 9, buttonY - 9, buttonX + 9, buttonY + 9);
   }
 
   // 📱 PAS D'INSTRUCTIONS SUR MOBILE - Expérience pure et immersive
@@ -516,11 +515,7 @@ class Particle {
     this.noiseOffsetY = random(1000);
     this.shimmer = 0;
 
-    // Système de flou
-    this.blurPhase = random(TWO_PI);
-    this.blurSpeed = random(0.01, 0.05);
-    this.maxBlur = random(5, 25);
-    this.blurIntensity = 0;
+    // 📱 MOBILE : Pas de système de flou pour une expérience nette
   }
 
   update() {
@@ -529,8 +524,8 @@ class Particle {
     const dy = this.y - mouseWorldY;
     const distSquared = dx * dx + dy * dy;
 
-    if (distSquared < 1225) {
-      // 35*35, zone d'influence tactile réduite pour mobile
+    if (distSquared < 625) {
+      // 25*25, zone d'influence tactile ultra-réduite pour mobile
       const d = Math.sqrt(distSquared);
       const force = 8 / d; // 📱 Force douce pour mobile
       this.x += dx * force * 0.25; // 📱 Facteur d'atténuation mobile
@@ -556,18 +551,8 @@ class Particle {
     this.x += this.vx;
     this.y += this.vy;
 
-    // Fade shimmer - Plus lent pour compenser la réduction d'intensité
+    // 📱 MOBILE : Fade shimmer simple sans flou
     this.shimmer *= 0.92; // Changé de 0.88 à 0.92 pour durer plus longtemps
-
-    // 🚀 Flou dynamique adapté pour 30 FPS
-    this.blurPhase += this.blurSpeed;
-    this.blurIntensity = (sin(this.blurPhase) + 1) / 2;
-
-    if (random() < 0.025) {
-      // Augmenté de 0.015 à 0.025 pour compenser 30 FPS
-      this.blurSpeed = random(0.03, 0.12); // Augmenté pour compenser le framerate
-      this.maxBlur = random(12, 30); // Réduit la valeur max pour économiser des performances
-    }
   }
 
   shine() {
@@ -577,68 +562,19 @@ class Particle {
   show() {
     noStroke();
 
+    // 📱 MOBILE : Rendu simple et net SANS FLOU
     const shimmerColor = color(255, 255, 255, 255);
     let finalColor = lerpColor(this.color, shimmerColor, this.shimmer / 3); // Intensité ÷3
     let size = this.baseSize + (this.shimmer / 2) * (this.baseSize * 2); // Taille shimmer ÷3
 
-    // 🚀 OPTIMISATION FLOU : Seulement pour les cas importants
-    const needsBlur =
-      this.shimmer > 0.1 || this.depth > 0.7 || this.blurIntensity > 0.8;
-
-    if (needsBlur) {
-      // Système de flou limité aux cas nécessaires
-      const depthBlur = this.depth > 0.7 ? map(this.depth, 0.7, 1, 0, 5) : 0; // Réduction du flou de profondeur
-      const shimmerGlow = (this.shimmer / 3) * 20; // Intensité shimmer ÷3
-      const dynamicBlur =
-        this.blurIntensity > 0.8 ? this.blurIntensity * this.maxBlur * 0.6 : 0; // Seuil plus haut et réduction
-      const totalBlur = depthBlur + shimmerGlow + dynamicBlur;
-
-      drawingContext.shadowBlur = Math.min(totalBlur, 25); // 🚀 Plafond à 25px au lieu de illimité
-
-      if (this.shimmer > 0.1) {
-        drawingContext.shadowColor = `rgba(255, 255, 255, ${
-          (this.shimmer / 3) * 0.4
-        })`; // Intensité ÷3
-      } else if (this.blurIntensity > 0.8) {
-        const haloIntensity = this.blurIntensity * 0.2; // Réduction de l'intensité
-        drawingContext.shadowColor = `rgba(150, 220, 255, ${haloIntensity})`; // Couleur fixe au lieu de random
-      } else {
-        const shadowIntensity = map(this.depth, 0.7, 1, 0.1, 0.2);
-        drawingContext.shadowColor = `rgba(200, 200, 200, ${shadowIntensity})`;
-      }
-    } else {
-      // 🚀 Pas de flou pour les particules normales = gain de performance majeur
-      drawingContext.shadowBlur = 0;
-    }
-
+    // 📱 MOBILE : Pas de flou - Rendu direct pour une expérience nette
     fill(finalColor);
     ellipse(this.x, this.y, size, size);
-
-    if (needsBlur) {
-      drawingContext.shadowBlur = 0; // Reset seulement si on avait du flou
-    }
   }
 }
 
-// === FONCTIONS INTERACTIVES ===
-function triggerBlurWave() {
-  const waveCenter = getRandomPixel(); // 🚀 Pool optimisé
-  if (waveCenter) {
-    const waveRadius = random(150, 250);
-
-    // 🚀 Optimisation: utilise cache de longueur au lieu de forEach
-    for (let i = 0; i < particlesCount; i++) {
-      const particle = particles[i];
-      const distance = dist(particle.x, particle.y, waveCenter.x, waveCenter.y);
-      if (distance < waveRadius) {
-        const intensity = map(distance, 0, waveRadius, 1, 0.3);
-        particle.blurSpeed = random(0.08, 0.2) * intensity;
-        particle.maxBlur = random(20, 50) * intensity;
-        particle.blurPhase = random(TWO_PI);
-      }
-    }
-  }
-}
+// === FONCTIONS INTERACTIVES MOBILE ===
+// 📱 MOBILE : Pas de triggerBlurWave - Flou désactivé pour une expérience nette
 
 // 📱 FONCTIONS SUPPRIMÉES POUR MOBILE : addParticles, removeParticles, resetParticles, clearAllParticles
 // Mobile utilise un nombre fixe de 500 neurones - pas d'ajout/suppression dynamique
@@ -872,11 +808,11 @@ function touchEnded() {
   return false;
 }
 
-// 📱 AUDIO TOGGLE MOBILE
+// 📱 AUDIO TOGGLE MOBILE - Position haut gauche
 function handleAudioToggle() {
-  const buttonX = width - 35;
-  const buttonY = height - 45;
-  const buttonRadius = 15;
+  const buttonX = 35; // Nouveau: haut gauche
+  const buttonY = 35; // Nouveau: haut gauche
+  const buttonRadius = 18; // Zone de clic légèrement plus large
 
   const distance = dist(currentTouch.x, currentTouch.y, buttonX, buttonY);
 

@@ -327,10 +327,10 @@ function connectParticles() {
     }
   }
 
-  // 🚀 OPTIMISATION MAJEURE : Dessiner par groupes avec un seul style par groupe
-  drawConnectionGroup(normalConnections, [100, 150, 200], 1.0);
-  drawConnectionGroup(activeConnections, [200, 220, 255], 1.2);
-  drawConnectionGroup(electricConnections, [255, 255, 255], 1.5);
+  // 🚀 DESKTOP : Toutes les connexions en bleu électrique (identique mobile)
+  drawConnectionGroup(normalConnections, [0, 150, 255], 1.0); // Bleu électrique
+  drawConnectionGroup(activeConnections, [0, 150, 255], 1.2); // Bleu électrique plus intense
+  drawConnectionGroup(electricConnections, [0, 150, 255], 1.5); // Bleu électrique très intense
 
   return activityLevel;
 }
@@ -376,8 +376,8 @@ function displayInfo() {
 
       let statsHTML = `${particles.length} neurons active`;
       statsHTML += `<br>Connections firing`;
-      statsHTML += `<br>🚀 ${zones}/8 zones`;
-      statsHTML += `<br><span style="color: #00ff88; font-size: 0.8em;">⚡ Brain V2 - 30FPS</span>`;
+      statsHTML += `<br>🔵 ${zones}/8 zones (blue)`;
+      statsHTML += `<br><span style="color: #0096ff; font-size: 0.8em;">⚡ Brain V2 - Blue Electric</span>`;
 
       statsElement.innerHTML = statsHTML;
     }
